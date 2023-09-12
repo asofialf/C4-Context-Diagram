@@ -1,0 +1,48 @@
+workspace {
+
+    model {
+        viajero = person "Viajero" "Persona que viaja desde Estados Unidos a Perú y cuenta con la disponibilidad de transportar artículos" "Segmento"
+        comprador = person "Comprador" "Persona en Perú que desea adquirir artículos en Estados Unidos por sus bajos precios" "Segmento"
+        niubiz_api = softwaresystem "Niubiz API" "API de la empresa VISA que facilita los pagos online" "Existing System" 
+        google_maps = softwaresystem "Google Maps Platform API" "API de la empresa Google que permite usar los servicios contenidos en el motor de mapas de Google" "Existing System"
+        email_system = softwaresystem "E-mail System" "Microsoft Exchange e-mail system" "Existing System"
+        tripstore = softwareSystem "TripStore" "Sistema que permite la compra de productos en Estados Unidos desde Perú mediante un viajero" "Main"
+        #relationships
+        viajero -> tripstore "Usa"
+        comprador -> tripstore "Usa"
+        niubiz_api -> tripstore "Permite los pagos dentro de la plataforma"
+        tripstore -> google_maps "Consulta la ubicación del viajero con el pedido"
+        tripstore -> email_system "Envía correos mediante"
+        email_system -> viajero "Envía correos a"
+        email_system -> comprador "Envía correos a"
+        }
+    views {
+        systemContext tripstore "SystemContext" {
+            include *
+            animation {
+                tripstore
+                viajero
+                comprador
+                google_maps
+                niubiz_api
+                email_system
+            }
+            autolayout lr
+        }
+        theme default
+        styles {
+         element "Existing System" {
+                background #8E44AD 
+                color #ffffff
+            } 
+         element "Segmento"{
+             background #27AE60 
+             color #ffffff
+         }
+         element "Main"{
+             background #E74C3C
+             color #ffffff
+         }
+        }
+    }
+}
