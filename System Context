@@ -13,8 +13,6 @@ workspace {
         niubiz_api -> tripstore "Permite los pagos dentro de la plataforma"
         tripstore -> google_maps "Consulta la ubicación del viajero con el pedido"
         tripstore -> email_system "Envía correos mediante"
-        email_system -> viajero "Envía correos a"
-        email_system -> comprador "Envía correos a"
         }
     views {
         systemContext tripstore "SystemContext" {
