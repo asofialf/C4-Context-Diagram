@@ -1,0 +1,98 @@
+workspace {
+
+    model {
+        viajero = person "Viajero" "Persona que viaja desde Estados Unidos a Perú y cuenta con la disponibilidad de transportar artículos" "Segmento"
+        comprador = person "Comprador" "Persona en Perú que desea adquirir artículos en Estados Unidos por sus bajos precios" "Segmento"
+        niubiz_api = softwaresystem "Niubiz API" "API de la empresa VISA que facilita los pagos online" "Existing System"
+        email_api = softwaresystem "E-mail System" "Microsoft Exchange e-mail system" "Existing System"
+        google_api = softwaresystem "Google Maps Platform API" "Api de la empresa de Google que permite usar los servicios contenidos en el motor de mapas de Google" "Existing System"
+        tripstore = softwareSystem "TripStore" "bd"{
+            webapp = container "Aplicación Web" "Entrega contenido estático y la página simple de TripStore" {
+                viajero -> this "Usa"
+                comprador -> this "Usa"
+            }
+            sap = container "Single Page Application" "Provee a los usuarios las funcionalidades de TripStore" {
+                 webapp -> this "Entrega al navegador web del cliente"
+            }
+            authentication_bounded = container "Authentication Bounded Context" "Bounded Context que gestiona la autentificación de los usuarios"{
+                sap -> this "Llamada API a"
+            }
+            buyer_bounded = container "Buyer Bounded Context" "Bounded Context que permite registrar a los usuarios compradores"{
+                sap -> this "Llamada API a"
+            }
+            traveler_bounded = container "Traveler Bounded Context" "Bounded Context que permite registrar a los usuarios viajeros"{
+                sap -> this "Llamada API a"
+            }
+            orders_bounded = container "Order Bounded Context" "Bounded Context que permite registrar las órdenes de los compradores"{
+                sap -> this "Llamada API a"
+            }
+            products_bounded = container "Product Bounded Context" "Bounded Context que permite gestionar los productos"{
+                sap -> this "Llamada API a"
+            }
+            notification_bounded = container "Notification Bounded Context" "Bounded Context que permite gestionar las notificaciones"{
+                sap -> this "Llamada API a"
+                email_api -> this "Permite el envío de correos"
+            }
+            payment_bounded = container "Payment Bounded Context" "Bounded Context que gestiona los pagos en la plataforma"{
+                sap -> this "Llamada API a"
+                niubiz_api -> this "Permite realizar los pagos"
+            }
+            tracking_bounded = container "Tracking Order Bounded Context" "Bounded Context que gestiona el seguimiento de los pedidos"{
+                sap -> this "Llamada API a"
+                google_api -> this "Permite realizar el seguimiento satelital a las órdenes
+            }
+            shopping_cart = container "Shopping Cart Bounded Context" "Bounded Context que gestiona los carritos de compra de los usuarios"{
+                sap -> this "Llamada API a"
+            }
+            container "SpringBoot API" "Permite a los usuarios interactuar y conectarse, compartiendo y agregando información" {
+                sap -> this "Usa"
+            }
+            database = container "Base de datos" "Almacena la información" "Existing System"{
+                authentication_bounded -> this "Lee y escribe en"
+                buyer_bounded -> this "Lee y escribe en"
+                payment_bounded -> this "Lee y escribe en"
+                orders_bounded -> this "Lee y escribe en"
+                shopping_cart -> this "Lee y escribe en"
+                traveler_bounded -> this "Lee y escribe en"
+                products_bounded -> this "Lee y escribe en"
+                tracking_bounded -> this "Lee y escribe en"
+                notification_bounded -> this "Lee y escribe en"
+            }
+        }
+    }
+
+    views {
+        systemContext tripstore {
+            include *
+            animation {
+                viajero
+                comprador
+                google_api
+                niubiz_api
+                email_api
+            }
+        }
+
+        container tripstore {
+            include *
+        }
+
+        theme default
+        styles {
+            element "Segmento"{
+                background #27AE60 
+                color #ffffff
+            }
+            element "Existing System" {
+                background #8E44AD 
+                color #ffffff
+            }
+            element "bd" {
+                background #E74C3C
+                color #ffffff
+            }
+        }
+      
+    }
+
+}
